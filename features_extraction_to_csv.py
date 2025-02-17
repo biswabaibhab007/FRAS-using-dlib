@@ -13,7 +13,7 @@ path_images_from_camera = "data/data_faces_from_camera/"
 #  Use frontal face detector of Dlib
 detector = dlib.get_frontal_face_detector()
 
-#  Get face landmarks
+#  Get facial landmarks
 predictor = dlib.shape_predictor('data/data_dlib/shape_predictor_68_face_landmarks.dat')
 
 #  Use Dlib resnet50 model to get 128D face descriptor
@@ -39,7 +39,6 @@ def return_128d_features(path_img):
 
 
 #   Return the mean value of 128D face descriptor for person X
-
 def return_features_mean_personX(path_face_personX):
     features_list_personX = []
     photos_list = os.listdir(path_face_personX)
@@ -70,6 +69,7 @@ def main():
     person_list = os.listdir("data/data_faces_from_camera/")
     person_list.sort()
 
+    # Open CSV File for Writing
     with open("data/features_all.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         for person in person_list:
@@ -84,6 +84,7 @@ def main():
                 # "person_x_tom"
                 person_name = person.split('_', 2)[-1]
             features_mean_personX = np.insert(features_mean_personX, 0, person_name, axis=0)
+
             # features_mean_personX will be 129D, person name + 128 features
             writer.writerow(features_mean_personX)
             logging.info('\n')

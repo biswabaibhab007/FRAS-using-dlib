@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import sqlite3
 from datetime import datetime
 
@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', selected_date='', no_data=False)
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    return render_template('index.html', selected_date=today_date, no_data=False)
 
 @app.route('/attendance', methods=['POST'])
 def attendance():
@@ -23,9 +24,9 @@ def attendance():
     conn.close()
 
     if not attendance_data:
-        return render_template('index.html', selected_date=selected_date, no_data=True)
-    
-    return render_template('index.html', selected_date=selected_date, attendance_data=attendance_data)
+        return jsonify({'status': 'no_data', 'message': 'No attendance data found for this date.'})
+
+    return jsonify({'status': 'success', 'attendance_data': attendance_data})
 
 if __name__ == '__main__':
     app.run(debug=True)
